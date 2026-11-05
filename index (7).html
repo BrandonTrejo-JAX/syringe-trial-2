@@ -3,207 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Syringe Reading Trainer</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    margin:10px;
-    background:#f5f5f5;
+:root{
+    --ink:#10303a;
+    --ink-soft:#4b6670;
+    --paper:#e9f0f1;
+    --card:#ffffff;
+    --line:#d3e0e3;
+    --teal:#0e7c86;
+    --teal-dark:#0a5f67;
+    --teal-tint:#e0f2f3;
+    --fluid:#39a7cf;
+    --good:#1b8a4b;
+    --good-tint:#e3f5ea;
+    --bad:#c23a30;
+    --bad-tint:#fcebe9;
+    --marker:#c23a30;
+    --radius:14px;
+    --font:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
-h1{
-    text-align:center;
-    margin:5px 0;
-    font-size:30px;
+*{ box-sizing:border-box; }
+
+body{
+    font-family:var(--font);
+    margin:0;
+    padding:20px 14px 0;
+    background:
+        radial-gradient(circle at 15% -10%, #d6e8ea 0, transparent 45%),
+        var(--paper);
+    color:var(--ink);
+    min-height:100vh;
 }
 
 #mainContainer{
-    max-width:1400px;
+    max-width:1100px;
     margin:auto;
 }
 
+/* ---------- Header ---------- */
+
+.appHeader{
+    text-align:center;
+    margin:6px 0 22px;
+}
+
+.appHeader h1{
+    margin:0;
+    font-size:clamp(26px,4vw,38px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:var(--ink);
+}
+
+.appHeader p{
+    margin:6px 0 0;
+    color:var(--ink-soft);
+    font-size:16px;
+}
+
+/* ---------- Home screen ---------- */
+
+#homeScreen h2{
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+}
+
 #topBar{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+    max-width:900px;
+    margin:0 auto 20px;
+}
+
+.moduleBtn{
     display:flex;
     flex-direction:column;
-    align-items:center;
-    gap:12px;
-    margin-bottom:20px;
-}
-
-.moduleBtn{
-    width:260px;
-    padding:12px 18px;
-    font-size:16px;
+    align-items:flex-start;
+    gap:6px;
+    text-align:left;
+    padding:20px 22px;
     cursor:pointer;
-    border:none;
-    background:#1976d2;
-    color:white;
-    border-radius:6px;
-}
-
-.moduleBtn{
-    padding:10px 18px;
-    font-size:16px;
-    cursor:pointer;
-    border:none;
-    background:#1976d2;
-    color:white;
-    border-radius:6px;
+    border:1.5px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    border-radius:var(--radius);
+    font-family:inherit;
+    transition:border-color .15s, box-shadow .15s, transform .15s;
 }
 
 .moduleBtn:hover{
-    background:#1565c0;
+    border-color:var(--teal);
+    box-shadow:0 8px 22px rgba(14,124,134,.16);
+    transform:translateY(-2px);
+}
+
+.moduleBtn:active{ transform:translateY(0); }
+
+.moduleBtn:focus-visible,
+.actionBtn:focus-visible,
+#typedAnswer:focus-visible{
+    outline:3px solid #7cc9d0;
+    outline-offset:2px;
+}
+
+.modeTag{
+    display:inline-block;
+    font-size:13px;
+    font-weight:700;
+    color:var(--teal-dark);
+    background:var(--teal-tint);
+    border-radius:999px;
+    padding:3px 11px;
+}
+
+.modeTitle{
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+}
+
+.modeDesc{
+    font-size:15px;
+    color:var(--ink-soft);
+    line-height:1.4;
+}
+
+/* ---------- Game screen top row ---------- */
+
+#gameTop{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+}
+
+#statusWrap{
+    flex:1;
+    min-width:220px;
 }
 
 #statusBar{
-    margin-top:10px;
-    margin-bottom:20px;
-    font-size:18px;
-    text-align:center;
+    display:flex;
+    justify-content:space-between;
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:6px;
 }
 
+#statusBar b{ color:var(--ink); }
+
+#progressTrack{
+    height:8px;
+    background:#cfdde0;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+#progressFill{
+    height:100%;
+    width:0;
+    background:var(--teal);
+    border-radius:999px;
+    transition:width .35s ease;
+}
+
+/* ---------- Buttons ---------- */
+
+.actionBtn{
+    padding:12px 22px;
+    margin:5px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:700;
+    font-family:inherit;
+    border:none;
+    border-radius:10px;
+    background:var(--teal);
+    color:white;
+    transition:background .15s, transform .1s, box-shadow .15s;
+    box-shadow:0 2px 0 var(--teal-dark);
+}
+
+.actionBtn:hover{ background:var(--teal-dark); }
+
+.actionBtn:active{
+    transform:translateY(2px);
+    box-shadow:none;
+}
+
+.actionBtn.ghost,
+#resetPlungerBtn,
+#module3PrevBtn,
+#homeBtn{
+    background:var(--card);
+    color:var(--ink);
+    border:1.5px solid var(--line);
+    box-shadow:none;
+}
+
+.actionBtn.ghost:hover,
+#resetPlungerBtn:hover,
+#module3PrevBtn:hover,
+#homeBtn:hover{
+    background:var(--teal-tint);
+    border-color:var(--teal);
+}
+
+#homeBtn{ margin:0; padding:10px 16px; }
+
+#nextBtn{
+    background:var(--ink);
+    box-shadow:0 2px 0 #000;
+}
+
+#nextBtn:hover{ background:#0a2028; }
+
+/* ---------- Question card ---------- */
+
 #questionArea{
-    background:white;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:20px;
-    box-shadow:0 0 5px rgba(0,0,0,.15);
+    background:var(--card);
+    padding:22px 18px 16px;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 10px 30px rgba(16,48,58,.08);
+}
+
+#moduleInfo{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:15px;
+    font-weight:700;
+    color:var(--teal-dark);
 }
 
 #questionText{
-    font-size:26px;
+    font-size:clamp(20px,3vw,28px);
+    font-weight:600;
+    line-height:1.4;
     text-align:center;
     margin-bottom:10px;
 }
 
+/* ---------- Feedback toast ---------- */
+
 #feedback{
     position:fixed;
-    top:50px;
-
+    top:24px;
     left:50%;
     transform:translateX(-50%);
-
     z-index:9999;
-
     background:white;
-    border:2px solid #ccc;
-    border-radius:8px;
-
-    padding:12px 20px;
-
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:14px 26px;
     text-align:center;
     font-size:20px;
-    font-weight:bold;
-
-    box-shadow:0 4px 12px rgba(0,0,0,.25);
-
-    min-width:300px;
-
+    font-weight:700;
+    box-shadow:0 12px 34px rgba(16,48,58,.28);
+    min-width:min(320px,90vw);
     display:none;
 }
 
-.correct{
-    color:green;
+#feedback.correct{
+    color:var(--good);
+    background:var(--good-tint);
+    border-color:var(--good);
+    animation:pop .25s ease;
 }
 
-.incorrect{
-    color:red;
+#feedback.incorrect{
+    color:var(--bad);
+    background:var(--bad-tint);
+    border-color:var(--bad);
+    animation:pop .25s ease;
 }
+
+@keyframes pop{
+    from{ transform:translateX(-50%) scale(.94); opacity:0; }
+    to{ transform:translateX(-50%) scale(1); opacity:1; }
+}
+
+/* ---------- Syringe ---------- */
 
 #syringeContainer{
     display:flex;
     justify-content:center;
-    margin-top:5px;
-    margin-bottom:5px;
+    margin:6px 0;
+    background:linear-gradient(#f6fafb,#eef4f5);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:6px 4px;
 }
+
+svg{ user-select:none; }
+
+#plungerHandle{ cursor:grab; }
+#plungerHandle:active{ cursor:grabbing; }
+
+#syringeSVG{
+    touch-action:none;
+    max-width:100%;
+}
+
+.scaleLabel{
+    font-family:var(--font);
+    font-weight:600;
+    fill:#2c4a54;
+}
+
+/* ---------- Answer + controls ---------- */
+
+#answerBox{
+    text-align:center;
+    margin-top:14px;
+}
+
+#typedAnswer{
+    width:170px;
+    font-size:24px;
+    font-family:inherit;
+    font-weight:600;
+    padding:8px;
+    text-align:center;
+    border:2px solid var(--line);
+    border-radius:10px;
+    color:var(--ink);
+    background:#fbfdfd;
+}
+
+#typedAnswer:focus{ border-color:var(--teal); }
 
 #controls{
     text-align:center;
     margin-top:10px;
 }
 
-.actionBtn{
-    padding:12px 20px;
-    margin:5px;
-    cursor:pointer;
-    font-size:16px;
-    border:none;
-    border-radius:6px;
-    background:#4caf50;
-    color:white;
-}
-
-.actionBtn:hover{
-    background:#388e3c;
-}
-
-#answerBox{
-    text-align:center;
-    margin-top:15px;
-}
-
-#typedAnswer{
-    width:150px;
-    font-size:22px;
-    padding:6px;
-    text-align:center;
-}
-
-#moduleInfo{
-    text-align:center;
-    margin-bottom:10px;
-    font-size:18px;
-}
+/* ---------- Summary ---------- */
 
 #summaryScreen{
     display:none;
-    background:white;
+    background:var(--card);
     padding:30px;
-    border-radius:8px;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:0 10px 30px rgba(16,48,58,.08);
     margin-top:20px;
-}
-
-#reviewArea{
-    margin-top:20px;
-}
-
-svg{
-    user-select:none;
-}
-
-#fluid{
-    fill:#4da6ff;
-}
-
-#plungerHandle{
-    cursor:grab;
-}
-
-#plungerHandle:active{
-    cursor:grabbing;
-}
-
-#syringeSVG{
-    touch-action:none;
-}
-
-#footerWatermark{
     text-align:center;
-    margin-top:30px;
-    padding:12px;
-    border-top:1px solid #ddd;
-    color:#888;
-    font-size:12px;
-    opacity:0.65;
-    user-select:none;
 }
 
-/* =======================================
-MODULE 3 LAYOUT
-======================================= */
+#summaryScreen h2{
+    margin:0 0 6px;
+    font-size:26px;
+}
+
+#summaryText h3{
+    margin:10px 0;
+    color:var(--ink-soft);
+    font-size:16px;
+}
+
+#reviewArea{ margin-top:20px; }
+
+/* ---------- Module 3 layout ---------- */
 
 #module3Layout{
     display:none;
@@ -212,107 +387,115 @@ MODULE 3 LAYOUT
     gap:30px;
     margin-top:10px;
     width:100%;
-    box-sizing:border-box;
 }
 
 #module3DoseInfo{
     text-align:left;
     font-size:18px;
-    min-width:250px;
-    box-sizing:border-box;
+    line-height:1.3;
+    min-width:230px;
+    padding:14px 18px;
+    background:var(--teal-tint);
+    border-radius:12px;
 }
 
 #module3TableArea{
     display:none;
-    box-sizing:border-box;
+}
+
+#module3Table{
+    margin:auto;
+    border-collapse:separate;
+    border-spacing:0;
+    text-align:center;
+    min-width:400px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    font-size:16px;
+}
+
+#module3Table th{
+    background:var(--ink);
+    color:white;
+    font-weight:600;
+    padding:9px 14px;
+}
+
+#module3Table td{
+    padding:8px 14px;
+    border-top:1px solid var(--line);
+}
+
+#module3Table tr:nth-child(even) td{ background:#f6fafb; }
+
+#module3Table td.cellGood{
+    color:var(--good);
+    font-weight:700;
+    background:var(--good-tint) !important;
+}
+
+#module3Table td.cellBad{
+    color:var(--bad);
+    font-weight:700;
+    background:var(--bad-tint) !important;
 }
 
 #module3StepLabel{
     text-align:center;
-    font-size:20px;
-    font-weight:bold;
-    margin-top:15px;
+    font-size:19px;
+    font-weight:700;
+    color:var(--teal-dark);
+    margin-top:14px;
 }
 
+/* ---------- Footer ---------- */
 
-/* =======================================
-MODULE 3 - MOBILE / TOUCH DEVICES
-======================================= */
+#footerWatermark{
+    text-align:center;
+    margin-top:34px;
+    padding:14px;
+    border-top:1px solid var(--line);
+    color:#7a919a;
+    font-size:12px;
+    user-select:none;
+}
+
+/* ---------- Mobile / touch ---------- */
 
 @media (max-width:1000px),
        (pointer: coarse) and (hover: none){
 
     #module3Layout{
         flex-direction:column !important;
-
         align-items:center !important;
         justify-content:flex-start !important;
-
         width:100% !important;
-        max-width:100% !important;
-
         gap:15px !important;
         margin-top:10px !important;
-
-        box-sizing:border-box !important;
-
-        /*
-        IMPORTANT:
-        JavaScript controls visibility.
-        This rule only controls the layout
-        when Module 3 is displayed.
-        */
     }
-    /* Starting volume + dose information */
-    #module3DoseInfo{
-        display:block !important;
 
+    #module3DoseInfo{
         width:100% !important;
         min-width:0 !important;
-        max-width:100% !important;
-
         text-align:center !important;
-
-        font-size:18px !important;
+        font-size:17px !important;
         line-height:1.4 !important;
-
-        box-sizing:border-box !important;
     }
 
-    /* Dose results table */
     #module3TableArea{
         width:100% !important;
         min-width:0 !important;
-        max-width:100% !important;
-
         overflow-x:auto !important;
         overflow-y:hidden !important;
-
         margin:0 auto !important;
-
-        box-sizing:border-box !important;
-
-        /*
-        IMPORTANT:
-        Do NOT set display here.
-
-        JavaScript controls whether the table
-        is visible.
-        */
     }
 
     #module3Table{
         width:100% !important;
         min-width:0 !important;
-        max-width:100% !important;
-
-        margin:0 auto !important;
-
         font-size:14px !important;
-
         table-layout:fixed !important;
-
-        box-sizing:border-box !important;
     }
 
     #module3Table th,
@@ -323,63 +506,38 @@ MODULE 3 - MOBILE / TOUCH DEVICES
     }
 
     #module3Table th:nth-child(1),
-    #module3Table td:nth-child(1){
-        width:30% !important;
-    }
+    #module3Table td:nth-child(1){ width:30% !important; }
 
     #module3Table th:nth-child(2),
-    #module3Table td:nth-child(2){
-        width:35% !important;
-    }
+    #module3Table td:nth-child(2){ width:35% !important; }
 
     #module3Table th:nth-child(3),
-    #module3Table td:nth-child(3){
-        width:35% !important;
-    }
+    #module3Table td:nth-child(3){ width:35% !important; }
 
-    /* Current Step */
     #module3StepLabel{
         width:100% !important;
-        max-width:100% !important;
-
-        text-align:center !important;
-
         font-size:18px !important;
-
-        margin-top:10px !important;
-        margin-bottom:10px !important;
-
-        box-sizing:border-box !important;
+        margin:10px 0 !important;
     }
 
-    /* Syringe */
     #syringeContainer{
         width:100% !important;
-        max-width:100% !important;
-
         overflow:hidden !important;
-
-        box-sizing:border-box !important;
     }
 
     #syringeSVG{
         width:100% !important;
-        max-width:100% !important;
-
         height:auto !important;
-
         display:block !important;
     }
 
-    /* Buttons */
-    #controls{
-        width:100% !important;
-        box-sizing:border-box !important;
-    }
+    #controls{ width:100% !important; }
 
-    .actionBtn{
-        max-width:100%;
-    }
+    .actionBtn{ max-width:100%; }
+}
+
+@media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; animation:none !important; }
 }
 
 </style>
@@ -389,34 +547,39 @@ MODULE 3 - MOBILE / TOUCH DEVICES
 
 <div id="mainContainer">
 
-<h1>Drug Prep Practice - Syringe Reading Simulator</h1>
+<div class="appHeader">
+    <h1>Syringe Reading Simulator</h1>
+    <p>Drug prep practice for accurate volume reading and dosing</p>
+</div>
 
 <div id="homeScreen">
 
-<h2 style="text-align:center;">
-Select Training Module
-</h2>
+<h2>Select a training module</h2>
 
 <div id="topBar">
 
 <button class="moduleBtn" onclick="startModule(1)">
-Mode 1<br>
-Draw Up Volume
+    <span class="modeTag">Mode 1</span>
+    <span class="modeTitle">Draw Up Volume</span>
+    <span class="modeDesc">Pull the plunger to the volume you are asked for.</span>
 </button>
 
 <button class="moduleBtn" onclick="startModule(2)">
-Mode 2<br>
-Single Dose
+    <span class="modeTag">Mode 2</span>
+    <span class="modeTitle">Single Dose</span>
+    <span class="modeDesc">Give one dose and set the plunger to what is left.</span>
 </button>
 
 <button class="moduleBtn" onclick="startModule(3)">
-Mode 3<br>
-Five Doses from One Syringe
+    <span class="modeTag">Mode 3</span>
+    <span class="modeTitle">Five Doses from One Syringe</span>
+    <span class="modeDesc">Dose five mice in a row and track the remaining volume.</span>
 </button>
 
 <button class="moduleBtn" onclick="startModule(4)">
-Mode 4<br>
-Read Syringe Volume
+    <span class="modeTag">Mode 4</span>
+    <span class="modeTitle">Read Syringe Volume</span>
+    <span class="modeDesc">Read the volume shown and type it in.</span>
 </button>
 
 </div>
@@ -425,58 +588,33 @@ Read Syringe Volume
 
 <div id="gameScreen" style="display:none;">
 
-<button
-class="actionBtn"
-onclick="goHome()">
+<div id="gameTop">
 
-← Home
+    <button class="actionBtn" id="homeBtn" onclick="goHome()">← Home</button>
 
-</button>
-
-<div id="statusBar">
-
-Questions Correct:
-<span id="correctCount">0</span>
-
-|
-
-Question
-<span id="questionNumber">0</span>
-
-/
-
-<span id="questionTotal">10</span>
+    <div id="statusWrap">
+        <div id="statusBar">
+            <span>Correct: <b id="correctCount">0</b></span>
+            <span>Question <b id="questionNumber">0</b> / <b id="questionTotal">10</b></span>
+        </div>
+        <div id="progressTrack"><div id="progressFill"></div></div>
+    </div>
 
 </div>
 
 <div id="questionArea">
 
-<div id="moduleInfo">
+<div id="moduleInfo">Choose a module to begin</div>
 
-Choose a module to begin
+<div id="questionText">Question will appear here</div>
 
-</div>
-
-<div id="questionText">
-
-Question will appear here
-
-</div>
 <div id="module3Layout" style="display:none;">
 
     <div id="module3DoseInfo"></div>
 
-    <div id="module3TableArea"
-         style="display:none;">
+    <div id="module3TableArea" style="display:none;">
 
-        <table
-        id="module3Table"
-        border="1"
-        style="
-        margin:auto;
-        border-collapse:collapse;
-        text-align:center;
-        min-width:400px;">
+        <table id="module3Table">
 
             <tr>
                 <th>Mouse</th>
@@ -533,6 +671,30 @@ height="220"
 viewBox="0 0 1300 280"
 preserveAspectRatio="xMidYMid meet">
 
+<defs>
+    <linearGradient id="barrelGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset="0.45" stop-color="#f1f7f9"/>
+        <stop offset="1" stop-color="#dbe8ec"/>
+    </linearGradient>
+
+    <linearGradient id="fluidGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7fd0ee"/>
+        <stop offset="0.5" stop-color="#39a7cf"/>
+        <stop offset="1" stop-color="#2688ad"/>
+    </linearGradient>
+
+    <linearGradient id="metalGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9aa7ad"/>
+        <stop offset="0.5" stop-color="#e6ecee"/>
+        <stop offset="1" stop-color="#7c898f"/>
+    </linearGradient>
+
+    <linearGradient id="handleGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5b6c73"/>
+        <stop offset="1" stop-color="#2d3b41"/>
+    </linearGradient>
+</defs>
 
 <!-- SCALE AREA -->
 
@@ -545,8 +707,9 @@ x="120"
 y="70"
 width="1000"
 height="60"
-fill="white"
-stroke="black"
+rx="3"
+fill="url(#barrelGrad)"
+stroke="#2c4a54"
 stroke-width="2"/>
 
 <!-- FLUID -->
@@ -556,7 +719,20 @@ id="fluid"
 x="120"
 y="70"
 width="0"
-height="60"/>
+height="60"
+fill="url(#fluidGrad)"/>
+
+<!-- BARREL GLOSS -->
+
+<rect
+x="124"
+y="76"
+width="992"
+height="8"
+rx="4"
+fill="white"
+opacity="0.45"
+pointer-events="none"/>
 
 <!-- Correct answer marker -->
 
@@ -566,7 +742,7 @@ x1="0"
 y1="55"
 x2="0"
 y2="145"
-stroke="darkred"
+stroke="#c23a30"
 stroke-width="5"
 style="display:none;"/>
 
@@ -577,15 +753,16 @@ x="80"
 y="90"
 width="40"
 height="20"
-fill="#666"/>
+fill="#6c7b82"/>
 
 <line
 x1="20"
 y1="100"
 x2="80"
 y2="100"
-stroke="black"
-stroke-width="2"/>
+stroke="url(#metalGrad)"
+stroke-width="3"
+stroke-linecap="round"/>
 
 <!-- PLUNGER LINE -->
 
@@ -595,7 +772,8 @@ x="120"
 y="60"
 width="8"
 height="80"
-fill="black"/>
+rx="2"
+fill="#1a2327"/>
 
 <!-- PLUNGER SHAFT -->
 
@@ -605,7 +783,7 @@ x="120"
 y="92"
 width="120"
 height="16"
-fill="#666"/>
+fill="#6c7b82"/>
 
 <!-- HANDLE -->
 
@@ -616,14 +794,16 @@ x="0"
 y="75"
 width="40"
 height="50"
-fill="#444"/>
+rx="4"
+fill="url(#handleGrad)"/>
 
 <rect
 x="-20"
 y="88"
 width="80"
 height="24"
-fill="#444"/>
+rx="6"
+fill="url(#handleGrad)"/>
 
 </g>
 
@@ -643,67 +823,23 @@ style="display:none;">
 
 <div id="controls">
 
-<button
-class="actionBtn"
-id="checkBtn">
-Check Answer
-</button>
+<button class="actionBtn" id="checkBtn">Check Answer</button>
 
-<button
-class="actionBtn"
-id="nextBtn">
-Next Question
-</button>
+<button class="actionBtn" id="nextBtn">Next Question</button>
 
-<button
-class="actionBtn"
-id="resetPlungerBtn"
-style="display:none;">
-Reset Plunger
-</button>
+<button class="actionBtn" id="resetPlungerBtn" style="display:none;">Reset Plunger</button>
 
+<button class="actionBtn" id="dose1Btn" style="display:none;">Submit Mouse 1</button>
 
-<button
-class="actionBtn"
-id="dose1Btn"
-style="display:none;">
-Submit Mouse 1
-</button>
+<button class="actionBtn" id="dose2Btn" style="display:none;">Submit Mouse 2</button>
 
-<button
-class="actionBtn"
-id="dose2Btn"
-style="display:none;">
-Submit Mouse 2
-</button>
+<button class="actionBtn" id="dose3Btn" style="display:none;">Submit Mouse 3</button>
 
-<button
-class="actionBtn"
-id="dose3Btn"
-style="display:none;">
-Submit Mouse 3
-</button>
+<button class="actionBtn" id="dose4Btn" style="display:none;">Submit Mouse 4</button>
 
-<button
-class="actionBtn"
-id="dose4Btn"
-style="display:none;">
-Submit Mouse 4
-</button>
+<button class="actionBtn" id="dose5Btn" style="display:none;">Submit Mouse 5</button>
 
-<button
-class="actionBtn"
-id="dose5Btn"
-style="display:none;">
-Submit Mouse 5
-</button>
-
-<button
-class="actionBtn"
-id="module3PrevBtn"
-style="display:none;">
-Previous Mouse
-</button>
+<button class="actionBtn" id="module3PrevBtn" style="display:none;">Previous Mouse</button>
 
 </div>
 
@@ -724,7 +860,7 @@ Previous Mouse
 </div>
 
 <div id="footerWatermark">
-    Created by Brandon Trejo | Version 2.1 | 2026
+    Created by Brandon Trejo | Version 2.0 | 2026
 </div>
 
 <script>
@@ -743,14 +879,13 @@ const NOTCHES = 100;
 DRAW SCALE
 --------------------------------------- */
 
-const scaleGroup =
-document.getElementById("scaleGroup");
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+const scaleGroup = document.getElementById("scaleGroup");
 
 for(let i=0;i<=100;i++){
 
-    let x =
-    BARREL_X +
-    (i * (BARREL_WIDTH/100));
+    let x = BARREL_X + (i * (BARREL_WIDTH/100));
 
     let tickHeight;
 
@@ -764,64 +899,44 @@ for(let i=0;i<=100;i++){
         tickHeight = 25;
     }
 
-    let line =
-    document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "line"
-    );
+    let line = document.createElementNS(SVG_NS,"line");
 
     line.setAttribute("x1",x);
     line.setAttribute("x2",x);
     line.setAttribute("y1",150);
-    line.setAttribute(
-        "y2",
-        150 + tickHeight
-    );
+    line.setAttribute("y2",150 + tickHeight);
 
-    line.setAttribute("stroke","black");
-    line.setAttribute("stroke-width","1");
+    line.setAttribute("stroke", i % 10 === 0 ? "#10303a" : "#4b6670");
+    line.setAttribute("stroke-width", i % 10 === 0 ? "2" : "1");
 
     scaleGroup.appendChild(line);
 
     if(i % 10 === 0 && i !== 0){
 
-        let label =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+        let label = document.createElementNS(SVG_NS,"text");
 
-        label.setAttribute("x",x-10);
-        label.setAttribute("y",145);
+        label.setAttribute("x",x);
+        label.setAttribute("y",236);
+        label.setAttribute("text-anchor","middle");
+        label.setAttribute("font-size","22");
+        label.setAttribute("class","scaleLabel");
 
-        label.setAttribute(
-            "font-size",
-            "18"
-        );
-
-        label.textContent =
-        (i/100).toFixed(1);
+        label.textContent = (i/100).toFixed(1);
 
         scaleGroup.appendChild(label);
     }
 }
 
-let mlLabel =
-document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "text"
-);
+let mlLabel = document.createElementNS(SVG_NS,"text");
 
-mlLabel.setAttribute("x",1140);
-mlLabel.setAttribute("y",145);
-mlLabel.setAttribute("font-size","18");
+mlLabel.setAttribute("x",1160);
+mlLabel.setAttribute("y",236);
+mlLabel.setAttribute("text-anchor","middle");
+mlLabel.setAttribute("font-size","22");
+mlLabel.setAttribute("class","scaleLabel");
 mlLabel.textContent="mL";
 
 scaleGroup.appendChild(mlLabel);
-
-/* ---------------------------------------
-PART 2 GOES BELOW THIS LINE
---------------------------------------- */
 
 /* =======================================
 SYRINGE STATE
@@ -833,23 +948,17 @@ let dragging = false;
 
 let dragOffset = 0;
 
-let syringeSVG =
-document.getElementById("syringeSVG");
+let syringeSVG = document.getElementById("syringeSVG");
 
-let fluid =
-document.getElementById("fluid");
+let fluid = document.getElementById("fluid");
 
-let plungerFace =
-document.getElementById("plungerFace");
+let plungerFace = document.getElementById("plungerFace");
 
-let plungerShaft =
-document.getElementById("plungerShaft");
+let plungerShaft = document.getElementById("plungerShaft");
 
-let plungerHandle =
-document.getElementById("plungerHandle");
+let plungerHandle = document.getElementById("plungerHandle");
 
-let correctMarker =
-document.getElementById("correctMarker");
+let correctMarker = document.getElementById("correctMarker");
 
 /* =======================================
 VOLUME <-> PIXEL CONVERSION
@@ -857,28 +966,15 @@ VOLUME <-> PIXEL CONVERSION
 
 function volumeToX(volume){
 
-    return BARREL_X +
-    (
-        volume *
-        BARREL_WIDTH
-    );
+    return BARREL_X + (volume * BARREL_WIDTH);
 
 }
 
 function xToVolume(x){
 
-    let volume =
-    (x - BARREL_X) /
-    BARREL_WIDTH;
+    let volume = (x - BARREL_X) / BARREL_WIDTH;
 
-    volume =
-    Math.max(
-        0,
-        Math.min(
-            1,
-            volume
-        )
-    );
+    volume = Math.max(0, Math.min(1, volume));
 
     return volume;
 
@@ -890,56 +986,31 @@ MOVE SYRINGE GRAPHICS
 
 function setVolume(volume){
 
-    volume =
-    Math.max(
-        0,
-        Math.min(
-            1,
-            volume
-        )
-    );
+    volume = Math.max(0, Math.min(1, volume));
 
     currentVolume = volume;
 
-    let x =
-    volumeToX(volume);
+    let x = volumeToX(volume);
 
-    fluid.setAttribute(
-        "width",
-        x - BARREL_X
-    );
+    fluid.setAttribute("width", x - BARREL_X);
 
-    plungerFace.setAttribute(
-        "x",
-        x
-    );
+    plungerFace.setAttribute("x", x);
 
-    plungerShaft.setAttribute(
-        "x",
-        x + 8
-    );
+    plungerShaft.setAttribute("x", x + 8);
 
-    plungerShaft.setAttribute(
-        "width",
-        120
-    );
+    plungerShaft.setAttribute("width", 120);
 
-    plungerHandle.setAttribute(
-        "transform",
-        `translate(${x+120},0)`
-    );
+    plungerHandle.setAttribute("transform", `translate(${x+120},0)`);
 
 }
+
 /* =======================================
 SNAP TO NOTCHES
 ======================================= */
 
 function snapVolume(volume){
 
-    return (
-        Math.round(volume * 100)
-        / 100
-    );
+    return Math.round(volume * 100) / 100;
 
 }
 
@@ -947,37 +1018,16 @@ function snapVolume(volume){
 POINTER POSITION / MOBILE-SAFE SVG MAPPING
 ======================================= */
 
-/*
-    IMPORTANT:
-    Do NOT calculate SVG coordinates using:
-
-        (clientX - rect.left) / rect.width
-
-    because the SVG uses:
-
-        preserveAspectRatio="xMidYMid meet"
-
-    On mobile, the displayed SVG can have scaling/letterboxing
-    that makes the HTML rectangle different from the actual
-    SVG coordinate system.
-
-    Instead, getScreenCTM() converts the phone/desktop screen
-    coordinates directly into SVG viewBox coordinates.
-*/
-
 function getSVGPoint(clientX, clientY){
 
-    const point =
-        syringeSVG.createSVGPoint();
+    const point = syringeSVG.createSVGPoint();
 
     point.x = clientX;
     point.y = clientY;
 
     const svgPoint =
         point.matrixTransform(
-            syringeSVG
-                .getScreenCTM()
-                .inverse()
+            syringeSVG.getScreenCTM().inverse()
         );
 
     return {
@@ -986,7 +1036,6 @@ function getSVGPoint(clientX, clientY){
     };
 
 }
-
 
 /* =======================================
 START POINTER DRAG
@@ -1000,12 +1049,6 @@ function startPointerDrag(e){
 
     dragging = true;
 
-    /*
-        Capture the pointer so movement continues to be
-        received even if the user's finger moves slightly
-        outside the plunger element.
-    */
-
     try{
         e.currentTarget.setPointerCapture(e.pointerId);
     }
@@ -1013,28 +1056,15 @@ function startPointerDrag(e){
         /* Some browsers may not support pointer capture */
     }
 
-    const pt =
-        getSVGPoint(
-            e.clientX,
-            e.clientY
-        );
+    const pt = getSVGPoint(e.clientX, e.clientY);
 
-    const plungerX =
-        volumeToX(currentVolume);
+    const plungerX = volumeToX(currentVolume);
 
-    /*
-        Preserve the point where the user grabbed the
-        plunger instead of forcing the plunger center
-        underneath the finger.
-    */
-
-    dragOffset =
-        pt.x - plungerX;
+    dragOffset = pt.x - plungerX;
 
     e.preventDefault();
 
 }
-
 
 /* =======================================
 POINTER DRAGGING
@@ -1048,21 +1078,13 @@ function movePointerDrag(e){
 
     e.preventDefault();
 
-    const pt =
-        getSVGPoint(
-            e.clientX,
-            e.clientY
-        );
+    const pt = getSVGPoint(e.clientX, e.clientY);
 
-    const volume =
-        xToVolume(
-            pt.x - dragOffset
-        );
+    const volume = xToVolume(pt.x - dragOffset);
 
     setVolume(volume);
 
 }
-
 
 /* =======================================
 END POINTER DRAG
@@ -1076,18 +1098,9 @@ function endPointerDrag(e){
 
     dragging = false;
 
-    /*
-        Snap to the nearest 0.01 mL notch after releasing.
-    */
+    currentVolume = snapVolume(currentVolume);
 
-    currentVolume =
-        snapVolume(
-            currentVolume
-        );
-
-    setVolume(
-        currentVolume
-    );
+    setVolume(currentVolume);
 
     try{
 
@@ -1096,9 +1109,7 @@ function endPointerDrag(e){
             e.currentTarget.releasePointerCapture
         ){
 
-            e.currentTarget.releasePointerCapture(
-                e.pointerId
-            );
+            e.currentTarget.releasePointerCapture(e.pointerId);
 
         }
 
@@ -1109,65 +1120,21 @@ function endPointerDrag(e){
 
 }
 
-
 /* =======================================
 POINTER EVENT LISTENERS
 ======================================= */
 
-/*
-    Pointer Events handle:
+plungerHandle.addEventListener("pointerdown", startPointerDrag);
 
-        - Desktop mouse
-        - Mobile touchscreen
-        - Stylus
+plungerFace.addEventListener("pointerdown", startPointerDrag);
 
-    This replaces the old separate mouse + touch
-    event system.
-*/
+plungerShaft.addEventListener("pointerdown", startPointerDrag);
 
-plungerHandle.addEventListener(
-    "pointerdown",
-    startPointerDrag
-);
+window.addEventListener("pointermove", movePointerDrag, { passive:false });
 
-plungerFace.addEventListener(
-    "pointerdown",
-    startPointerDrag
-);
+window.addEventListener("pointerup", endPointerDrag);
 
-plungerShaft.addEventListener(
-    "pointerdown",
-    startPointerDrag
-);
-
-
-/*
-    Movement is attached to the window so the drag
-    continues even if the finger leaves the plunger.
-*/
-
-window.addEventListener(
-    "pointermove",
-    movePointerDrag,
-    {
-        passive:false
-    }
-);
-
-
-/*
-    Release can happen anywhere on the screen.
-*/
-
-window.addEventListener(
-    "pointerup",
-    endPointerDrag
-);
-
-window.addEventListener(
-    "pointercancel",
-    endPointerDrag
-);
+window.addEventListener("pointercancel", endPointerDrag);
 
 /* =======================================
 HELPERS
@@ -1175,19 +1142,13 @@ HELPERS
 
 function randomInt(min,max){
 
-    return Math.floor(
-        Math.random() *
-        (max-min+1)
-    ) + min;
+    return Math.floor(Math.random() * (max-min+1)) + min;
 
 }
 
 function randomVolume(){
 
-    return (
-        randomInt(0,100)
-        / 100
-    );
+    return randomInt(0,100) / 100;
 
 }
 
@@ -1197,16 +1158,13 @@ DISPLAY FORMATTING
 
 function volumeTextML(v){
 
-    return v.toFixed(2)
-    + " mL";
+    return v.toFixed(2) + " mL";
 
 }
 
 function volumeTextUL(v){
 
-    return Math.round(
-        v * 1000
-    ) + " µL";
+    return Math.round(v * 1000) + " µL";
 
 }
 
@@ -1216,9 +1174,7 @@ RANDOM UNIT GENERATOR
 
 function randomUnit(){
 
-    return Math.random() < 0.5
-    ? "mL"
-    : "uL";
+    return Math.random() < 0.5 ? "mL" : "uL";
 
 }
 
@@ -1260,46 +1216,23 @@ let activeQuestion = null;
 UI REFERENCES
 ======================================= */
 
-const questionText =
-document.getElementById(
-    "questionText"
-);
+const questionText = document.getElementById("questionText");
 
-const feedback =
-document.getElementById(
-    "feedback"
-);
+const feedback = document.getElementById("feedback");
 
-const correctCount =
-document.getElementById(
-    "correctCount"
-);
+const correctCount = document.getElementById("correctCount");
 
-const questionNumber =
-document.getElementById(
-    "questionNumber"
-);
+const questionNumber = document.getElementById("questionNumber");
 
-const questionTotal =
-document.getElementById(
-    "questionTotal"
-);
+const questionTotal = document.getElementById("questionTotal");
 
-const typedAnswer =
-document.getElementById(
-    "typedAnswer"
-);
+const progressFill = document.getElementById("progressFill");
 
+const typedAnswer = document.getElementById("typedAnswer");
 
-const summaryScreen =
-document.getElementById(
-    "summaryScreen"
-);
+const summaryScreen = document.getElementById("summaryScreen");
 
-const moduleInfo =
-document.getElementById(
-    "moduleInfo"
-);
+const moduleInfo = document.getElementById("moduleInfo");
 
 /* =======================================
 RESET FEEDBACK
@@ -1311,8 +1244,7 @@ function clearFeedback(){
 
     feedback.className = "";
 
-    feedback.style.display =
-    "none";
+    feedback.style.display = "none";
 
 }
 
@@ -1322,14 +1254,16 @@ UPDATE SCORE UI
 
 function updateScoreDisplay(){
 
-    correctCount.textContent =
-    correctAnswers;
+    correctCount.textContent = correctAnswers;
 
-    questionNumber.textContent =
-    currentQuestion;
+    questionNumber.textContent = currentQuestion;
 
-    questionTotal.textContent =
-    totalQuestions;
+    questionTotal.textContent = totalQuestions;
+
+    progressFill.style.width =
+        (totalQuestions > 0
+            ? Math.min(100, (currentQuestion / totalQuestions) * 100)
+            : 0) + "%";
 
 }
 
@@ -1349,8 +1283,7 @@ function resetSession(){
 
     activeQuestion = null;
 
-    summaryScreen.style.display =
-    "none";
+    summaryScreen.style.display = "none";
 
     clearFeedback();
 
@@ -1365,7 +1298,7 @@ START POSITION
 setVolume(0.00);
 
 /* =======================================
-PART 3 STARTS BELOW THIS LINE
+ELEMENT REFERENCES
 ======================================= */
 
 const checkBtn = document.getElementById("checkBtn");
@@ -1373,45 +1306,48 @@ const nextBtn = document.getElementById("nextBtn");
 const resetPlungerBtn = document.getElementById("resetPlungerBtn");
 const summaryText = document.getElementById("summaryText");
 const reviewArea = document.getElementById("reviewArea");
-const dose1Btn =
-document.getElementById("dose1Btn");
 
-const dose2Btn =
-document.getElementById("dose2Btn");
+const dose1Btn = document.getElementById("dose1Btn");
+const dose2Btn = document.getElementById("dose2Btn");
+const dose3Btn = document.getElementById("dose3Btn");
+const dose4Btn = document.getElementById("dose4Btn");
+const dose5Btn = document.getElementById("dose5Btn");
 
-const dose3Btn =
-document.getElementById("dose3Btn");
+const module3PrevBtn = document.getElementById("module3PrevBtn");
 
-const dose4Btn =
-document.getElementById("dose4Btn");
+const module3TableArea = document.getElementById("module3TableArea");
 
-const dose5Btn =
-document.getElementById("dose5Btn");
+const homeScreen = document.getElementById("homeScreen");
 
-const module3PrevBtn =
-document.getElementById("module3PrevBtn");
-
-const module3TableArea =
-document.getElementById("module3TableArea");
-
-const homeScreen =document.getElementById("homeScreen");
-
-const gameScreen =document.getElementById("gameScreen");
+const gameScreen = document.getElementById("gameScreen");
 
 let module3Step = 0;
 let module3Answers = [];
 let resetVolume = 0;
+
+/* Visual helper: clears the green/red table highlighting */
+
+function resetModule3TableStyles(){
+
+    for(let i = 1; i <= 5; i++){
+
+        document.getElementById("userDose" + i).className = "";
+
+        document.getElementById("correctDose" + i).className = "";
+
+    }
+
+}
+
 /* =======================================
 MODULE START
 ======================================= */
 
 function startModule(module){
 
-    homeScreen.style.display =
-    "none";
+    homeScreen.style.display = "none";
 
-    gameScreen.style.display =
-    "block";
+    gameScreen.style.display = "block";
 
     currentModule = module;
 
@@ -1434,17 +1370,13 @@ function startModule(module){
 
 }
 
-
 function goHome(){
 
-    gameScreen.style.display =
-    "none";
+    gameScreen.style.display = "none";
 
-    homeScreen.style.display =
-    "block";
+    homeScreen.style.display = "block";
 
-    summaryScreen.style.display =
-    "none";
+    summaryScreen.style.display = "none";
 
     reviewMode = false;
 
@@ -1458,11 +1390,9 @@ function goHome(){
 
     setVolume(0);
 
-    questionText.textContent =
-    "Question will appear here";
+    questionText.textContent = "Question will appear here";
 
-    moduleInfo.textContent =
-    "Choose a module";
+    moduleInfo.textContent = "Choose a module";
 
     updateScoreDisplay();
 
@@ -1476,63 +1406,39 @@ function generateQuestion(){
 
     clearFeedback();
 
-    plungerHandle.style.opacity =
-    "1";
+    plungerHandle.style.opacity = "1";
 
-    plungerHandle.style.cursor =
-    "grab";
+    plungerHandle.style.cursor = "grab";
 
-    correctMarker.style.display =
-    "none";
+    correctMarker.style.display = "none";
 
-    summaryScreen.style.display =
-    "none";
+    summaryScreen.style.display = "none";
 
     currentQuestion++;
 
     updateScoreDisplay();
 
-    typedAnswer.style.display =
-    "none";
+    typedAnswer.style.display = "none";
 
-    resetPlungerBtn.style.display =
-    "none";
+    resetPlungerBtn.style.display = "none";
 
-    document.getElementById(
-    "module3Layout"
-    ).style.display =
-    "none";
+    document.getElementById("module3Layout").style.display = "none";
 
-    module3TableArea.style.display =
-    "none";
+    module3TableArea.style.display = "none";
 
-    document.getElementById(
-    "module3StepLabel"
-    ).textContent = "";
+    document.getElementById("module3StepLabel").textContent = "";
 
-    dose1Btn.style.display =
-    "none";
+    dose1Btn.style.display = "none";
+    dose2Btn.style.display = "none";
+    dose3Btn.style.display = "none";
+    dose4Btn.style.display = "none";
+    dose5Btn.style.display = "none";
 
-    dose2Btn.style.display =
-    "none";
+    module3PrevBtn.style.display = "none";
 
-    dose3Btn.style.display =
-    "none";
+    nextBtn.style.display = "none";
 
-    dose4Btn.style.display =
-    "none";
-
-    dose5Btn.style.display =
-    "none";
-
-    module3PrevBtn.style.display =
-    "none";
-
-    nextBtn.style.display =
-    "none";
-
-    checkBtn.style.display =
-    "inline-block";
+    checkBtn.style.display = "inline-block";
 
     if(currentModule === 1){
         buildModule1();
@@ -1559,11 +1465,9 @@ DRAW UP VOLUME
 
 function buildModule1(){
 
-    let target =
-    randomVolume();
+    let target = randomVolume();
 
-    let unit =
-    randomUnit();
+    let unit = randomUnit();
 
     activeQuestion = {
         answer:target
@@ -1571,12 +1475,10 @@ function buildModule1(){
 
     setVolume(0);
 
-    moduleInfo.textContent =
-    "Mode 1 - Draw Up Volume";
+    moduleInfo.textContent = "Mode 1 - Draw Up Volume";
 
     questionText.textContent =
-    "Draw up " +
-    formatVolume(target,unit);
+    "Draw up " + formatVolume(target,unit);
 
 }
 
@@ -1587,17 +1489,13 @@ SINGLE DOSE
 
 function buildModule2(){
 
-    let start =
-    (randomInt(20,100))/100;
+    let start = (randomInt(20,100))/100;
 
-    let dose =
-    (randomInt(1,start*100))/100;
+    let dose = (randomInt(1,start*100))/100;
 
-    let final =
-    snapVolume(start-dose);
+    let final = snapVolume(start-dose);
 
-    let unit =
-    randomUnit();
+    let unit = randomUnit();
 
     activeQuestion = {
 
@@ -1612,11 +1510,9 @@ function buildModule2(){
 
     setVolume(start);
 
-    resetPlungerBtn.style.display =
-    "inline-block";
+    resetPlungerBtn.style.display = "inline-block";
 
-    moduleInfo.textContent =
-    "Mode 2 - Single Dose";
+    moduleInfo.textContent = "Mode 2 - Single Dose";
 
     questionText.innerHTML =
 
@@ -1636,41 +1532,22 @@ function buildModule2(){
 
 /* =======================================
 MODULE 3
-THREE DOSES
-======================================= */
-
-/* =======================================
-MODULE 3
 FIVE MICE - ONE CAGE
 ======================================= */
 
 function buildModule3(){
 
-    moduleInfo.textContent =
-    "Mode 3 - Five Mice from One Syringe";
+    moduleInfo.textContent = "Mode 3 - Five Mice from One Syringe";
 
-    /*
-        Starting volume is large enough for
-        five similar mouse doses.
+    /* 0.75 - 1.00 mL starting volume. */
 
-        0.75 - 1.00 mL starting volume.
-    */
+    let start = randomInt(75,100) / 100;
 
-    let start =
-    randomInt(75,100) / 100;
+    /* First mouse dose: 0.10 - 0.20 mL */
 
-    /*
-        First mouse dose:
-        0.10 - 0.20 mL
-    */
+    let dose1 = randomInt(10,20) / 100;
 
-    let dose1 =
-    randomInt(10,20) / 100;
-
-    /*
-        Each following mouse receives a dose
-        within +/- 0.05 mL of the previous dose.
-    */
+    /* Each following mouse receives a dose within +/- 0.05 mL of the previous dose. */
 
     let dose2;
     let dose3;
@@ -1679,11 +1556,7 @@ function buildModule3(){
 
     do{
 
-        dose2 =
-        snapVolume(
-            dose1 +
-            randomInt(-5,5) / 100
-        );
+        dose2 = snapVolume(dose1 + randomInt(-5,5) / 100);
 
     }
     while(
@@ -1691,14 +1564,9 @@ function buildModule3(){
         dose2 > 0.25
     );
 
-
     do{
 
-        dose3 =
-        snapVolume(
-            dose2 +
-            randomInt(-5,5) / 100
-        );
+        dose3 = snapVolume(dose2 + randomInt(-5,5) / 100);
 
     }
     while(
@@ -1706,14 +1574,9 @@ function buildModule3(){
         dose3 > 0.25
     );
 
-
     do{
 
-        dose4 =
-        snapVolume(
-            dose3 +
-            randomInt(-5,5) / 100
-        );
+        dose4 = snapVolume(dose3 + randomInt(-5,5) / 100);
 
     }
     while(
@@ -1721,14 +1584,9 @@ function buildModule3(){
         dose4 > 0.25
     );
 
-
     do{
 
-        dose5 =
-        snapVolume(
-            dose4 +
-            randomInt(-5,5) / 100
-        );
+        dose5 = snapVolume(dose4 + randomInt(-5,5) / 100);
 
     }
     while(
@@ -1736,11 +1594,7 @@ function buildModule3(){
         dose5 > 0.25
     );
 
-
-    /*
-        Make sure all five doses fit inside
-        the starting syringe volume.
-    */
+    /* Make sure all five doses fit inside the starting syringe volume. */
 
     while(
         dose1 +
@@ -1750,11 +1604,9 @@ function buildModule3(){
         dose5 >= start
     ){
 
-        start =
-        randomInt(75,100) / 100;
+        start = randomInt(75,100) / 100;
 
     }
-
 
     activeQuestion = {
 
@@ -1770,47 +1622,21 @@ function buildModule3(){
 
         answers:[
 
-            snapVolume(
-                start - dose1
-            ),
+            snapVolume(start - dose1),
 
-            snapVolume(
-                start -
-                dose1 -
-                dose2
-            ),
+            snapVolume(start - dose1 - dose2),
 
-            snapVolume(
-                start -
-                dose1 -
-                dose2 -
-                dose3
-            ),
+            snapVolume(start - dose1 - dose2 - dose3),
 
-            snapVolume(
-                start -
-                dose1 -
-                dose2 -
-                dose3 -
-                dose4
-            ),
+            snapVolume(start - dose1 - dose2 - dose3 - dose4),
 
-            snapVolume(
-                start -
-                dose1 -
-                dose2 -
-                dose3 -
-                dose4 -
-                dose5
-            )
+            snapVolume(start - dose1 - dose2 - dose3 - dose4 - dose5)
 
         ]
 
     };
 
-
-    resetVolume =
-    start;
+    resetVolume = start;
 
     setVolume(start);
 
@@ -1818,74 +1644,40 @@ function buildModule3(){
 
     module3Answers = [];
 
+    document.getElementById("module3Layout").style.display = "flex";
 
-    /*
-        Show Module 3 layout
-    */
+    module3TableArea.style.display = "block";
 
-    document.getElementById(
-        "module3Layout"
-    ).style.display =
-    "flex";
+    /* Reset answer table */
 
-    module3TableArea.style.display =
-    "block";
+    for(let i = 1; i <= 5; i++){
 
+        document.getElementById("userDose" + i).textContent = "-";
 
-    /*
-        Reset answer table
-    */
-
-    for(
-        let i = 1;
-        i <= 5;
-        i++
-    ){
-
-        document.getElementById(
-            "userDose" + i
-        ).textContent =
-        "-";
-
-        document.getElementById(
-            "correctDose" + i
-        ).textContent =
-        "-";
+        document.getElementById("correctDose" + i).textContent = "-";
 
     }
 
+    resetModule3TableStyles();
 
-    /*
-        Button states
-    */
+    /* Button states */
 
-    dose1Btn.style.display =
-    "inline-block";
+    dose5Btn.textContent = "Submit Mouse 5";
 
-    dose2Btn.style.display =
-    "none";
+    dose1Btn.style.display = "inline-block";
 
-    dose3Btn.style.display =
-    "none";
+    dose2Btn.style.display = "none";
+    dose3Btn.style.display = "none";
+    dose4Btn.style.display = "none";
+    dose5Btn.style.display = "none";
 
-    dose4Btn.style.display =
-    "none";
+    module3PrevBtn.style.display = "none";
 
-    dose5Btn.style.display =
-    "none";
+    checkBtn.style.display = "none";
 
-    module3PrevBtn.style.display =
-    "none";
+    nextBtn.style.display = "none";
 
-    checkBtn.style.display =
-    "none";
-
-    nextBtn.style.display =
-    "none";
-
-    resetPlungerBtn.style.display =
-    "inline-block";
-
+    resetPlungerBtn.style.display = "inline-block";
 
     updateModule3Question();
 
@@ -1897,108 +1689,73 @@ function updateModule3Question(){
 
     "<b>Starting Volume:</b> " +
 
-    volumeTextML(
-        activeQuestion.start
-    );
+    volumeTextML(activeQuestion.start);
 
+    document.getElementById("module3Layout").style.display = "flex";
 
-    document.getElementById(
-        "module3Layout"
-    ).style.display =
-    "flex";
+    /* Display all five mouse doses. */
 
-
-    /*
-        Display all five mouse doses.
-    */
-
-    document.getElementById(
-        "module3DoseInfo"
-    ).innerHTML =
+    document.getElementById("module3DoseInfo").innerHTML =
 
         "<b>Mouse 1:</b> " +
-        volumeTextML(
-            activeQuestion.doses[0]
-        ) +
+        volumeTextML(activeQuestion.doses[0]) +
 
         "<br><br>" +
 
         "<b>Mouse 2:</b> " +
-        volumeTextML(
-            activeQuestion.doses[1]
-        ) +
+        volumeTextML(activeQuestion.doses[1]) +
 
         "<br><br>" +
 
         "<b>Mouse 3:</b> " +
-        volumeTextML(
-            activeQuestion.doses[2]
-        ) +
+        volumeTextML(activeQuestion.doses[2]) +
 
         "<br><br>" +
 
         "<b>Mouse 4:</b> " +
-        volumeTextML(
-            activeQuestion.doses[3]
-        ) +
+        volumeTextML(activeQuestion.doses[3]) +
 
         "<br><br>" +
 
         "<b>Mouse 5:</b> " +
-        volumeTextML(
-            activeQuestion.doses[4]
-        );
+        volumeTextML(activeQuestion.doses[4]);
 
-
-    /*
-        Current step indicator.
-    */
+    /* Current step indicator. */
 
     let stepText = "";
 
-
     if(module3Step === 0){
 
-        stepText =
-        "Current Step: Mouse 1";
+        stepText = "Current Step: Mouse 1";
 
     }
     else if(module3Step === 1){
 
-        stepText =
-        "Current Step: Mouse 2";
+        stepText = "Current Step: Mouse 2";
 
     }
     else if(module3Step === 2){
 
-        stepText =
-        "Current Step: Mouse 3";
+        stepText = "Current Step: Mouse 3";
 
     }
     else if(module3Step === 3){
 
-        stepText =
-        "Current Step: Mouse 4";
+        stepText = "Current Step: Mouse 4";
 
     }
     else if(module3Step === 4){
 
-        stepText =
-        "Current Step: Mouse 5";
+        stepText = "Current Step: Mouse 5";
 
     }
     else{
 
-        stepText =
-        "Cage Complete - Submit Answer";
+        stepText = "Cage Complete - Submit Answer";
 
     }
 
-
-    document.getElementById(
-        "module3StepLabel"
-    ).textContent =
-    stepText;
+    document.getElementById("module3StepLabel").textContent = stepText;
 
 }
 
@@ -2009,11 +1766,9 @@ READ VOLUME
 
 function buildModule4(){
 
-    let volume =
-    randomVolume();
+    let volume = randomVolume();
 
-    let unit =
-    randomUnit();
+    let unit = randomUnit();
 
     activeQuestion = {
         answer:volume,
@@ -2022,19 +1777,15 @@ function buildModule4(){
 
     setVolume(volume);
 
-    plungerHandle.style.opacity =
-    "0.5";
+    plungerHandle.style.opacity = "0.5";
 
-    plungerHandle.style.cursor =
-    "default";
+    plungerHandle.style.cursor = "default";
 
-    typedAnswer.style.display =
-    "inline-block";
+    typedAnswer.style.display = "inline-block";
 
     typedAnswer.value = "";
 
-    moduleInfo.textContent =
-    "Mode 4 - Read Syringe Volume";
+    moduleInfo.textContent = "Mode 4 - Read Syringe Volume";
 
     questionText.innerHTML =
     "What volume is shown?<br><br>" +
@@ -2044,52 +1795,37 @@ function buildModule4(){
 
 }
 
-
 function rebuildModule1Review(){
 
     setVolume(0);
 
-    moduleInfo.textContent =
-    "Review - Mode 1";
+    moduleInfo.textContent = "Review - Mode 1";
 
     questionText.textContent =
-    "Draw up " +
-    volumeTextML(
-        activeQuestion.answer
-    );
+    "Draw up " + volumeTextML(activeQuestion.answer);
 
 }
 
 function rebuildModule2Review(){
 
-    resetVolume =
-    activeQuestion.start;
+    resetVolume = activeQuestion.start;
 
-    setVolume(
-        activeQuestion.start
-    );
+    setVolume(activeQuestion.start);
 
-    resetPlungerBtn.style.display =
-    "inline-block";
+    resetPlungerBtn.style.display = "inline-block";
 
-    moduleInfo.textContent =
-    "Review - Mode 2";
+    moduleInfo.textContent = "Review - Mode 2";
 
     questionText.innerHTML =
 
     "<b>Starting Volume:</b> " +
-    volumeTextML(
-        activeQuestion.start
-    ) +
+    volumeTextML(activeQuestion.start) +
 
     "<br><br>" +
 
     "<b>Give Dose:</b> " +
 
-    formatVolume(
-        activeQuestion.dose,
-        activeQuestion.unit
-    ) +
+    formatVolume(activeQuestion.dose, activeQuestion.unit) +
 
     "<br><br>" +
 
@@ -2099,82 +1835,48 @@ function rebuildModule2Review(){
 
 function rebuildModule3Review(){
 
-    moduleInfo.textContent =
-    "Review - Mode 3 - Five Mice";
-
+    moduleInfo.textContent = "Review - Mode 3 - Five Mice";
 
     module3Step = 0;
 
     module3Answers = [];
 
+    resetVolume = activeQuestion.start;
 
-    resetVolume =
-    activeQuestion.start;
+    setVolume(activeQuestion.start);
 
+    module3TableArea.style.display = "block";
 
-    setVolume(
-        activeQuestion.start
-    );
+    /* Reset the five-row table. */
 
+    for(let i = 1; i <= 5; i++){
 
-    module3TableArea.style.display =
-    "block";
+        document.getElementById("userDose" + i).textContent = "-";
 
-
-    /*
-        Reset the five-row table.
-    */
-
-    for(
-        let i = 1;
-        i <= 5;
-        i++
-    ){
-
-        document.getElementById(
-            "userDose" + i
-        ).textContent =
-        "-";
-
-        document.getElementById(
-            "correctDose" + i
-        ).textContent =
-        "-";
+        document.getElementById("correctDose" + i).textContent = "-";
 
     }
 
+    resetModule3TableStyles();
 
-    /*
-        Reset buttons.
-    */
+    /* Reset buttons. */
 
-    dose1Btn.style.display =
-    "inline-block";
+    dose5Btn.textContent = "Submit Mouse 5";
 
-    dose2Btn.style.display =
-    "none";
+    dose1Btn.style.display = "inline-block";
 
-    dose3Btn.style.display =
-    "none";
+    dose2Btn.style.display = "none";
+    dose3Btn.style.display = "none";
+    dose4Btn.style.display = "none";
+    dose5Btn.style.display = "none";
 
-    dose4Btn.style.display =
-    "none";
+    module3PrevBtn.style.display = "none";
 
-    dose5Btn.style.display =
-    "none";
+    resetPlungerBtn.style.display = "inline-block";
 
-    module3PrevBtn.style.display =
-    "none";
+    checkBtn.style.display = "none";
 
-    resetPlungerBtn.style.display =
-    "inline-block";
-
-    checkBtn.style.display =
-    "none";
-
-    nextBtn.style.display =
-    "none";
-
+    nextBtn.style.display = "none";
 
     updateModule3Question();
 
@@ -2182,17 +1884,13 @@ function rebuildModule3Review(){
 
 function rebuildModule4Review(){
 
-    setVolume(
-        activeQuestion.answer
-    );
+    setVolume(activeQuestion.answer);
 
-    typedAnswer.style.display =
-    "inline-block";
+    typedAnswer.style.display = "inline-block";
 
     typedAnswer.value = "";
 
-    moduleInfo.textContent =
-    "Review - Mode 4";
+    moduleInfo.textContent = "Review - Mode 4";
 
     questionText.innerHTML =
 
@@ -2210,15 +1908,11 @@ function rebuildModule4Review(){
 CHECK ANSWER
 ======================================= */
 
-checkBtn.addEventListener(
-"click",
-function(){
+checkBtn.addEventListener("click", function(){
 
     if(currentModule === 1){
 
-        let correct =
-        currentVolume ===
-        activeQuestion.answer;
+        let correct = currentVolume === activeQuestion.answer;
 
         gradeQuestion(correct);
 
@@ -2226,9 +1920,7 @@ function(){
 
     else if(currentModule === 2){
 
-        let correct =
-        currentVolume ===
-        activeQuestion.answer;
+        let correct = currentVolume === activeQuestion.answer;
 
         gradeQuestion(correct);
 
@@ -2236,35 +1928,22 @@ function(){
 
     else if(currentModule === 4){
 
-        let answer =
-        Number(
-            typedAnswer.value
-        );
+        let answer = Number(typedAnswer.value);
 
         let expected;
 
-        if(
-            activeQuestion.unit
-            === "mL"
-        ){
-            expected =
-            Number(
-                activeQuestion.answer
-                .toFixed(2)
-            );
+        if(activeQuestion.unit === "mL"){
+
+            expected = Number(activeQuestion.answer.toFixed(2));
+
         }
         else{
 
-            expected =
-            Math.round(
-                activeQuestion.answer
-                *1000
-            );
+            expected = Math.round(activeQuestion.answer * 1000);
 
         }
 
-        let correct =
-        answer === expected;
+        let correct = answer === expected;
 
         gradeQuestion(correct);
 
@@ -2276,98 +1955,60 @@ function(){
 GLOBAL ENTER KEY SUPPORT
 ======================================= */
 
-document.addEventListener(
-"keydown",
-function(e){
+document.addEventListener("keydown", function(e){
 
     if(e.key !== "Enter"){
         return;
     }
 
-    /* -----------------------------
-       MODULE 3 SPECIAL FLOW
-    ------------------------------ */
+    /* MODULE 3 SPECIAL FLOW */
 
     if(currentModule === 3){
 
-        if(
-            dose1Btn.style.display !==
-            "none"
-        ){
+        if(dose1Btn.style.display !== "none"){
             dose1Btn.click();
             return;
         }
 
-        if(
-            dose2Btn.style.display !==
-            "none"
-        ){
+        if(dose2Btn.style.display !== "none"){
             dose2Btn.click();
             return;
         }
 
-        if(
-            dose3Btn.style.display !==
-            "none"
-        ){
+        if(dose3Btn.style.display !== "none"){
             dose3Btn.click();
             return;
         }
 
-        if(
-            dose4Btn.style.display !==
-            "none"
-        ){
+        if(dose4Btn.style.display !== "none"){
             dose4Btn.click();
             return;
         }
 
-        if(
-            dose5Btn.style.display !==
-            "none"
-        ){
+        if(dose5Btn.style.display !== "none"){
             dose5Btn.click();
             return;
         }
 
-        if(
-            nextBtn.style.display !==
-            "none"
-        ){
-            nextBtn.click();
-            return;
-        }
-
-        if(
-            nextBtn.style.display !==
-            "none"
-        ){
+        if(nextBtn.style.display !== "none"){
             nextBtn.click();
             return;
         }
 
     }
 
-    /* -----------------------------
-       MODULES 1,2,4
-    ------------------------------ */
+    /* MODULES 1,2,4 */
 
     else{
 
-        if(
-            checkBtn.style.display !==
-            "none"
-        ){
+        if(checkBtn.style.display !== "none"){
 
             checkBtn.click();
             return;
 
         }
 
-        if(
-            nextBtn.style.display !==
-            "none"
-        ){
+        if(nextBtn.style.display !== "none"){
 
             nextBtn.click();
             return;
@@ -2376,357 +2017,210 @@ function(e){
 
     }
 
-}
-);
+});
 
 /* =======================================
 MODULE 3 BUTTONS
 FIVE MOUSE CAGE
 ======================================= */
 
+/* MOUSE 1 */
 
-/* ---------------------------------------
-MOUSE 1
---------------------------------------- */
+dose1Btn.addEventListener("click", function(){
 
-dose1Btn.addEventListener(
-"click",
-function(){
+    module3Answers[0] = currentVolume;
 
-    module3Answers[0] =
-    currentVolume;
-
-
-    document.getElementById(
-        "userDose1"
-    ).textContent =
-    volumeTextML(currentVolume);
-
+    document.getElementById("userDose1").textContent = volumeTextML(currentVolume);
 
     module3Step = 1;
 
+    dose1Btn.style.display = "none";
 
-    dose1Btn.style.display =
-    "none";
+    dose2Btn.style.display = "inline-block";
 
-    dose2Btn.style.display =
-    "inline-block";
+    module3PrevBtn.style.display = "inline-block";
 
-    module3PrevBtn.style.display =
-    "inline-block";
-
-
-    resetVolume =
-    activeQuestion.answers[0];
-
+    resetVolume = activeQuestion.answers[0];
 
     updateModule3Question();
 
-}
-);
+});
 
+/* MOUSE 2 */
 
-/* ---------------------------------------
-MOUSE 2
---------------------------------------- */
+dose2Btn.addEventListener("click", function(){
 
-dose2Btn.addEventListener(
-"click",
-function(){
+    module3Answers[1] = currentVolume;
 
-    module3Answers[1] =
-    currentVolume;
-
-
-    document.getElementById(
-        "userDose2"
-    ).textContent =
-    volumeTextML(currentVolume);
-
+    document.getElementById("userDose2").textContent = volumeTextML(currentVolume);
 
     module3Step = 2;
 
+    dose2Btn.style.display = "none";
 
-    dose2Btn.style.display =
-    "none";
+    dose3Btn.style.display = "inline-block";
 
-    dose3Btn.style.display =
-    "inline-block";
-
-
-    resetVolume =
-    activeQuestion.answers[1];
-
+    resetVolume = activeQuestion.answers[1];
 
     updateModule3Question();
 
-}
-);
+});
 
+/* MOUSE 3 */
 
-/* ---------------------------------------
-MOUSE 3
---------------------------------------- */
+dose3Btn.addEventListener("click", function(){
 
-dose3Btn.addEventListener(
-"click",
-function(){
+    module3Answers[2] = currentVolume;
 
-    module3Answers[2] =
-    currentVolume;
-
-
-    document.getElementById(
-        "userDose3"
-    ).textContent =
-    volumeTextML(currentVolume);
-
+    document.getElementById("userDose3").textContent = volumeTextML(currentVolume);
 
     module3Step = 3;
 
+    dose3Btn.style.display = "none";
 
-    dose3Btn.style.display =
-    "none";
+    dose4Btn.style.display = "inline-block";
 
-    dose4Btn.style.display =
-    "inline-block";
-
-
-    resetVolume =
-    activeQuestion.answers[2];
-
+    resetVolume = activeQuestion.answers[2];
 
     updateModule3Question();
 
-}
-);
+});
 
+/* MOUSE 4 */
 
-/* ---------------------------------------
-MOUSE 4
---------------------------------------- */
+dose4Btn.addEventListener("click", function(){
 
-dose4Btn.addEventListener(
-"click",
-function(){
+    module3Answers[3] = currentVolume;
 
-    module3Answers[3] =
-    currentVolume;
-
-
-    document.getElementById(
-        "userDose4"
-    ).textContent =
-    volumeTextML(currentVolume);
-
+    document.getElementById("userDose4").textContent = volumeTextML(currentVolume);
 
     module3Step = 4;
 
+    dose4Btn.style.display = "none";
 
-    dose4Btn.style.display =
-    "none";
+    dose5Btn.style.display = "inline-block";
 
-    dose5Btn.style.display =
-    "inline-block";
-
-
-    resetVolume =
-    activeQuestion.answers[3];
-
+    resetVolume = activeQuestion.answers[3];
 
     updateModule3Question();
 
-}
-);
+});
 
+/* MOUSE 5 */
 
-/* ---------------------------------------
-MOUSE 5
---------------------------------------- */
+dose5Btn.addEventListener("click", function(){
 
-dose5Btn.addEventListener(
-"click",
-function(){
+    module3Answers[4] = currentVolume;
 
-    module3Answers[4] =
-    currentVolume;
-
-
-    document.getElementById(
-        "userDose5"
-    ).textContent =
-    volumeTextML(currentVolume);
-
+    document.getElementById("userDose5").textContent = volumeTextML(currentVolume);
 
     module3Step = 5;
 
+    dose5Btn.textContent = "Submit Answer";
 
-    dose5Btn.textContent =
-    "Submit Answer";
+    /* Hide Previous Mouse while submitting the completed cage. */
 
+    module3PrevBtn.style.display = "none";
 
-    /*
-        Hide Previous Mouse while submitting
-        the completed cage.
-    */
-
-    module3PrevBtn.style.display =
-    "none";
-
-
-    /*
-        Grade all five mouse doses.
-    */
+    /* Grade all five mouse doses. */
 
     let allCorrect = true;
 
+    for(let i = 0; i < 5; i++){
 
-    for(
-        let i = 0;
-        i < 5;
-        i++
-    ){
+        document.getElementById("correctDose" + (i+1)).textContent =
+        volumeTextML(activeQuestion.answers[i]);
 
-        document.getElementById(
-            "correctDose" + (i+1)
-        ).textContent =
-        volumeTextML(
-            activeQuestion.answers[i]
-        );
-
-
-        if(
-            module3Answers[i]
-            !==
-            activeQuestion.answers[i]
-        ){
+        if(module3Answers[i] !== activeQuestion.answers[i]){
 
             allCorrect = false;
+
+            document.getElementById("userDose" + (i+1)).className = "cellBad";
+
+        }
+        else{
+
+            document.getElementById("userDose" + (i+1)).className = "cellGood";
 
         }
 
     }
 
+    gradeQuestion(allCorrect);
 
-    gradeQuestion(
-        allCorrect
-    );
-
-}
-);
-
+});
 
 /* =======================================
 PREVIOUS MOUSE
 ======================================= */
 
-module3PrevBtn.addEventListener(
-"click",
-function(){
+module3PrevBtn.addEventListener("click", function(){
 
     if(module3Step === 1){
 
-        /*
-            Return to Mouse 1.
-        */
+        /* Return to Mouse 1. */
 
         module3Step = 0;
 
-        dose1Btn.style.display =
-        "inline-block";
+        dose1Btn.style.display = "inline-block";
 
-        dose2Btn.style.display =
-        "none";
+        dose2Btn.style.display = "none";
 
-        module3PrevBtn.style.display =
-        "none";
+        module3PrevBtn.style.display = "none";
 
-
-        setVolume(
-            activeQuestion.start
-        );
+        setVolume(activeQuestion.start);
 
     }
-
 
     else if(module3Step === 2){
 
-        /*
-            Return to Mouse 2.
-        */
+        /* Return to Mouse 2. */
 
         module3Step = 1;
 
-        dose2Btn.style.display =
-        "inline-block";
+        dose2Btn.style.display = "inline-block";
 
-        dose3Btn.style.display =
-        "none";
+        dose3Btn.style.display = "none";
 
-
-        setVolume(
-            activeQuestion.answers[0]
-        );
+        setVolume(activeQuestion.answers[0]);
 
     }
-
 
     else if(module3Step === 3){
 
-        /*
-            Return to Mouse 3.
-        */
+        /* Return to Mouse 3. */
 
         module3Step = 2;
 
-        dose3Btn.style.display =
-        "inline-block";
+        dose3Btn.style.display = "inline-block";
 
-        dose4Btn.style.display =
-        "none";
+        dose4Btn.style.display = "none";
 
-
-        setVolume(
-            activeQuestion.answers[1]
-        );
+        setVolume(activeQuestion.answers[1]);
 
     }
-
 
     else if(module3Step === 4){
 
-        /*
-            Return to Mouse 4.
-        */
+        /* Return to Mouse 4. */
 
         module3Step = 3;
 
-        dose4Btn.style.display =
-        "inline-block";
+        dose4Btn.style.display = "inline-block";
 
-        dose5Btn.style.display =
-        "none";
+        dose5Btn.style.display = "none";
 
-
-        setVolume(
-            activeQuestion.answers[2]
-        );
+        setVolume(activeQuestion.answers[2]);
 
     }
 
-
     updateModule3Question();
 
-}
-);
+});
 
-resetPlungerBtn.addEventListener(
-"click",
-function(){
+resetPlungerBtn.addEventListener("click", function(){
 
-    setVolume(
-        resetVolume
-    );
+    setVolume(resetVolume);
 
 });
 
@@ -2738,28 +2232,22 @@ function gradeQuestion(correct){
 
     if(correct){
 
-        feedback.textContent =
-        "Correct";
+        feedback.textContent = "Correct";
 
-        feedback.className =
-        "correct";
+        feedback.className = "correct";
 
-        feedback.style.display =
-        "block";
+        feedback.style.display = "block";
 
         correctAnswers++;
 
-        correctMarker.style.display =
-        "none";
+        correctMarker.style.display = "none";
 
     }
     else{
 
-        feedback.className =
-        "incorrect";
+        feedback.className = "incorrect";
 
-        feedback.style.display =
-        "block";
+        feedback.style.display = "block";
 
         if(currentModule === 1){
 
@@ -2769,27 +2257,15 @@ function gradeQuestion(correct){
 
             "Correct answer: " +
 
-            volumeTextML(
-                activeQuestion.answer
-            );
+            volumeTextML(activeQuestion.answer);
 
-            let x =
-            volumeToX(
-                activeQuestion.answer
-            );
+            let x = volumeToX(activeQuestion.answer);
 
-            correctMarker.setAttribute(
-                "x1",
-                x
-            );
+            correctMarker.setAttribute("x1", x);
 
-            correctMarker.setAttribute(
-                "x2",
-                x
-            );
+            correctMarker.setAttribute("x2", x);
 
-            correctMarker.style.display =
-            "block";
+            correctMarker.style.display = "block";
 
         }
         else if(currentModule === 2){
@@ -2800,52 +2276,29 @@ function gradeQuestion(correct){
 
             "Final volume should be: " +
 
-            volumeTextML(
-                activeQuestion.answer
-            );
+            volumeTextML(activeQuestion.answer);
 
-            let x =
-            volumeToX(
-                activeQuestion.answer
-            );
+            let x = volumeToX(activeQuestion.answer);
 
-            correctMarker.setAttribute(
-                "x1",
-                x
-            );
+            correctMarker.setAttribute("x1", x);
 
-            correctMarker.setAttribute(
-                "x2",
-                x
-            );
+            correctMarker.setAttribute("x2", x);
 
-            correctMarker.style.display =
-            "block";
+            correctMarker.style.display = "block";
 
         }
         else if(currentModule === 4){
 
             let expected;
 
-            if(
-                activeQuestion.unit ===
-                "mL"
-            ){
+            if(activeQuestion.unit === "mL"){
 
-                expected =
-                activeQuestion.answer
-                .toFixed(2)
-                + " mL";
+                expected = activeQuestion.answer.toFixed(2) + " mL";
 
             }
             else{
 
-                expected =
-                Math.round(
-                    activeQuestion.answer *
-                    1000
-                )
-                + " µL";
+                expected = Math.round(activeQuestion.answer * 1000) + " µL";
 
             }
 
@@ -2857,53 +2310,36 @@ function gradeQuestion(correct){
 
             expected;
 
-            correctMarker.style.display =
-            "none";
+            correctMarker.style.display = "none";
 
         }
         else{
 
-            feedback.textContent =
-            "Incorrect";
+            feedback.textContent = "Incorrect";
 
-            correctMarker.style.display =
-            "none";
+            correctMarker.style.display = "none";
 
         }
 
         missedQuestions.push(
-            structuredClone(
-                activeQuestion
-            )
+            structuredClone(activeQuestion)
         );
 
     }
 
     updateScoreDisplay();
 
-    checkBtn.style.display =
-    "none";
+    checkBtn.style.display = "none";
 
-    dose1Btn.style.display =
-    "none";
+    dose1Btn.style.display = "none";
+    dose2Btn.style.display = "none";
+    dose3Btn.style.display = "none";
+    dose4Btn.style.display = "none";
+    dose5Btn.style.display = "none";
 
-    dose2Btn.style.display =
-    "none";
+    module3PrevBtn.style.display = "none";
 
-    dose3Btn.style.display =
-    "none";
-
-   dose4Btn.style.display =
-    "none";
-
-    dose5Btn.style.display =
-    "none";
-
-    module3PrevBtn.style.display =
-    "none";
-
-    nextBtn.style.display =
-    "inline-block";
+    nextBtn.style.display = "inline-block";
 
 }
 
@@ -2911,14 +2347,9 @@ function gradeQuestion(correct){
 NEXT QUESTION
 ======================================= */
 
-nextBtn.addEventListener(
-"click",
-function(){
+nextBtn.addEventListener("click", function(){
 
-    if(
-        currentQuestion
-        >= totalQuestions
-    ){
+    if(currentQuestion >= totalQuestions){
 
         showSummary();
 
@@ -2945,8 +2376,7 @@ SUMMARY
 
 function showSummary(){
 
-    summaryScreen.style.display =
-    "block";
+    summaryScreen.style.display = "block";
 
     summaryText.innerHTML =
 
@@ -2962,39 +2392,31 @@ function showSummary(){
     "Accuracy: " +
 
     (
-        (
-            correctAnswers /
-            totalQuestions
-        ) * 100
+        (correctAnswers / totalQuestions) * 100
     ).toFixed(1)
 
     + "%";
 
     reviewArea.innerHTML = "";
 
-    if(
-        missedQuestions.length > 0
-    ){
+    if(missedQuestions.length > 0){
 
-        let btn =
-        document.createElement(
-            "button"
-        );
+        let btn = document.createElement("button");
 
-        btn.className =
-        "actionBtn";
+        btn.className = "actionBtn";
 
         btn.textContent =
         "Review Missed Questions (" +
         missedQuestions.length +
         ")";
 
-        btn.onclick =
-        startReview;
+        btn.onclick = startReview;
 
         reviewArea.appendChild(btn);
 
     }
+
+    summaryScreen.scrollIntoView({ behavior:"smooth", block:"nearest" });
 
 }
 
@@ -3006,12 +2428,7 @@ function startReview(){
 
     reviewMode = true;
 
-    reviewQuestions =
-    JSON.parse(
-        JSON.stringify(
-            missedQuestions
-        )
-    );
+    reviewQuestions = JSON.parse(JSON.stringify(missedQuestions));
 
     reviewIndex = 0;
 
@@ -3019,16 +2436,13 @@ function startReview(){
 
     currentQuestion = 0;
 
-    totalQuestions =
-    reviewQuestions.length;
+    totalQuestions = reviewQuestions.length;
 
     missedQuestions = [];
 
-    summaryScreen.style.display =
-    "none";
+    summaryScreen.style.display = "none";
 
-    correctMarker.style.display =
-    "none";
+    correctMarker.style.display = "none";
 
     generateReviewQuestion();
 
@@ -3038,54 +2452,33 @@ function generateReviewQuestion(){
 
     clearFeedback();
 
-    correctMarker.style.display =
-    "none";
+    correctMarker.style.display = "none";
 
     currentQuestion++;
 
     updateScoreDisplay();
 
-    activeQuestion =
-    reviewQuestions[
-        reviewIndex
-    ];
+    activeQuestion = reviewQuestions[reviewIndex];
 
     reviewIndex++;
 
-    nextBtn.style.display =
-    "none";
+    nextBtn.style.display = "none";
 
-    checkBtn.style.display =
-    "inline-block";
+    checkBtn.style.display = "inline-block";
 
-    typedAnswer.style.display =
-    "none";
+    typedAnswer.style.display = "none";
 
-    resetPlungerBtn.style.display =
-    "none";
+    resetPlungerBtn.style.display = "none";
 
-    document.getElementById(
-        "module3Layout"
-    ).style.display =
-    "none";
+    document.getElementById("module3Layout").style.display = "none";
 
-    dose1Btn.style.display =
-    "none";
+    dose1Btn.style.display = "none";
+    dose2Btn.style.display = "none";
+    dose3Btn.style.display = "none";
+    dose4Btn.style.display = "none";
+    dose5Btn.style.display = "none";
 
-    dose2Btn.style.display =
-    "none";
-
-    dose3Btn.style.display =
-    "none";
-
-   dose4Btn.style.display =
-    "none";
-
-    dose5Btn.style.display =
-    "none";
-
-    module3PrevBtn.style.display =
-    "none";
+    module3PrevBtn.style.display = "none";
 
     if(currentModule === 1){
 
@@ -3115,10 +2508,6 @@ INITIAL DISPLAY
 ======================================= */
 
 updateScoreDisplay();
-
-/* =======================================
-END OF FILE
-======================================= */
 
 </script>
 </body>
